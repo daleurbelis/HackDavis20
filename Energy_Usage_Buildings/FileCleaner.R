@@ -45,30 +45,36 @@ setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/Lab/")
 df_lab_cleaned = data_compilation()
 df_lab_cleaned['Date'] = lapply(df_lab_cleaned['Date'], function(x) gsub('/', '-', x))
 df_lab_cleaned['Date'] = as.Date(df_lab_cleaned$Date, "%m-%d-%Y")
+colnames(df_lab_cleaned)[c(2, 5)] = c('Chilled_water', 'Natural_gas')
 
 
 setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/Classroom/")
 df_classroom_cleaned = data_compilation()
 df_classroom_cleaned['Date'] = lapply(df_classroom_cleaned['Date'], function(x) gsub('/', '-', x))
-df_classroom_cleaned['Date'] = as.Date(df_classroom_cleaned['Date'], '%m-%d-%Y')
+df_classroom_cleaned['Date'] = as.Date(df_classroom_cleaned$Date, '%m-%d-%Y')
+colnames(df_classroom_cleaned)[2] = c('Chilled_water')
 
 
 setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/Community/")
 df_community_cleaned = data_compilation()
 df_community_cleaned['Date'] = lapply(df_community_cleaned['Date'], function(x) gsub('/', '-', x))
-df_community_cleaned['Date'] = as.Date(df_community_cleaned['Date'], '%m-%d-%Y')
+df_community_cleaned['Date'] = as.Date(df_community_cleaned$Date, '%m-%d-%Y')
+colnames(df_community_cleaned)[c(3, 5)] = c('Chilled_water', 'Natural_gas')
 
 
 setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/Housing/")
 df_housing_cleaned = data_compilation()
 df_housing_cleaned['Date'] = lapply(df_housing_cleaned['Date'], function(x) gsub('/', '-', x))
-df_housing_cleaned['Date'] = as.Date(df_housing_cleaned['Date'], '%m-%d-%Y')
+df_housing_cleaned['Date'] = as.Date(df_housing_cleaned$Date, '%m-%d-%Y')
+colnames(df_community_cleaned)[c(3, 5)] = c('Chilled_water', 'Natural_gas')
+colnames(df_housing_cleaned)[2] = c('Chilled_water')
 
 
 setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/Office/")
 df_office_cleaned = data_compilation()
 df_office_cleaned['Date'] = lapply(df_office_cleaned['Date'], function(x) gsub('/', '-', x))
-df_office_cleaned['Date'] = as.Date(df_office_cleaned['Date'], '%m-%d-%Y')
+df_office_cleaned['Date'] = as.Date(df_office_cleaned$Date, '%m-%d-%Y')
+colnames(df_office_cleaned)[c(3, 5)] = c('Chilled_water', 'Natural_gas')
 
 
 setwd("C:/Users/kchu8/Desktop/GitHub/HackDavis20/Energy_Usage_Buildings/CleanedFiles/")
