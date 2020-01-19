@@ -1,5 +1,5 @@
 ---
-title: "Geocoding from UC Davis Pavillion"
+title: "AGGIE FORECASTING"
 author: Last updated, `r format(Sys.Date(), "%B %d, %Y")`
 
 output: 
@@ -37,7 +37,9 @@ require(graphics)
 library(forecast)
 library(lubridate)
 library(TSstudio)
+library(shinydashboard)
 ```
+
 
 
 
@@ -58,7 +60,7 @@ Sidebar {.sidebar data-width=400}
                                  All = "all"),
                   selected = "head")
     
-    actionButton("recalc", "GO")
+    #actionButton("recalc", "GO")
     p()
     
 
@@ -78,6 +80,13 @@ renderTable({
 })
 ```
 
+General Overview
+============================================================================
+
+```{r}
+
+```
+
 
 
 Analysis
@@ -86,13 +95,7 @@ Analysis
 Row {data-height=700}
 -----------------------------------------------------------------------
 
-```{r,include=FALSE,message=FALSE, warning=FALSE}
-api_key = "AIzaSyAnaLkG1iw1J1cTlAR6ZGGhF1bS5C7968Q"
-register_google(key = api_key)
-```
-
-
-### Forecast Visualization
+### Time Series Plot
 
 ```{r, echo=FALSE}
 
@@ -129,75 +132,36 @@ renderPlotly({
     
 ```
 
-
-
-### What's Going On?
+### 
 
 ```{r,echo=FALSE}
 
+renderPlot({
+    
+      req(input$file)
   
+      usage <- read_csv(input$file$datapath)
+      
+      usage$`Date Time`<-as.Date(usage$`Date Time`,'%m/%d/%Y')
+      invisible(as.Date(usage$`Date Time`,format))
+      
+      usage <- usage[c(1:36),]
+      #usage$Electricity[13] = 2309361
+      usage$total <-  usage$`Chilled Water` + usage$Electricity + usage$Steam
+      #usage_copy <- usage
+      usage <- usage[,-c(2,3,4)]
+      names(usage) <- c('Date','Total_Usage')
+      usage$Date <- rev(usage$Date)
+      
+      #assuming seasonality exists regardless of building, applying differencing of lag 12
+      auto = invisible(auto.arima(usage$Total_Usage,trace=TRUE))
+      order = c(auto$arma[1],auto$arma[2],auto$arma[3])
+      
+      arimafit <- Arima(usage$Total_Usage,order=order)
+      plot(forecast(arimafit,h=5))
+      
+})
 
-plot.acf.pacf <- function(s)
-{
-  #par(mfrow=c(2,1))
-  #tsplot(s,col=4,xlab = "Months",ylab="Usage",main="Monthly Energy Usage")
-  #abline(reg=lm(s~time(s)))
-  #lines(ksmooth(time(s), s, "normal", bandwidth = 3), lwd=2, col=2)
-
-  
-  par(mfrow=c(2,2))
-  acf(s,lag.max = 120)
-  pacf(s,lag.max = 120)
-
-  
-  qqnorm(s, pch = 1, frame = FALSE)
-  qqline(s, col = "steelblue", lwd = 2)
-  
-}
-
-plot.acf.pacf(usage$Total_Usage)
-
-
-#Test the null hypothesis that the log of the series has a unit root, versus the alternate hypothesis that the process is stationary. 
-# Want a p-value of less than 0.05 (or smaller)
-
-test_stationarity <- function(dat)
-{
-  adf.test(dat)
-}
-```
-
-
-```{r,warning=FALSE}
-
-
-
-sta = test_stationarity(usage$Total_Usage)
-
-i = sta$p.value
-while(i > 0.05){ #0.05 or less is the p-value needed for stationarity
-  print(i)
-  i = test_stationarity(diff(usage$Total_Usage))$p.value
-  print(i)
-}
-
-#now stationary, meaning no trend
-#but the expected value for the same month for different years may be the same
-```
-
-
-```{r}
-
-#assuming seasonality exists regardless of building, applying differencing of lag 12
-auto = auto.arima(usage$Total_Usage,trace=TRUE)
-
-
-
-
-```
-
-
-```{r,echo=FALSE}
 
 ```
 
